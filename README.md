@@ -17,6 +17,8 @@ The wage data come from the U.S. Bureau of Labor Statistics (BLS) Current Employ
 - Leisure and Hospitality
 
 The original BLS data used for the project are preserved in data/raw/bls_hourly_earnings_raw.csv. Additional source information and the retrieval date are documented in data/raw/SOURCES.md.
+## Running It
+To run it, open the notebook in Google Colab and run the cells from top to bottom. 
 
 ## Part 2: Data Audit and Cleaning
 
