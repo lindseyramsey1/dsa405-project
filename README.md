@@ -1,4 +1,4 @@
-# dsa405-project
+# DSA 405-project
 # Industry Wage Growth and Inflation
 
 This project examines how average hourly earnings have changed across eight U.S. industries from 2015 through 2025. The goal of the project is to compare wage growth across industries and eventually determine how those changes compare after accounting for inflation.
