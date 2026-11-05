@@ -33,3 +33,54 @@ The cleaned data retain all 1,056 original observations. The cleaning process co
 - `README.md` — project description and instructions
 - Project notebook — data audit, cleaning, documentation, and analysis
 
+## P3: Acquisition & Integration
+
+### Data Sources
+
+- **Bureau of Labor Statistics (BLS):** Monthly average hourly earnings across eight U.S. industries.
+- **Federal Reserve Economic Data (FRED):** Consumer Price Index for All Urban Consumers (`CPIAUCSL`).
+
+Both datasets cover January 2015 through December 2025.
+
+### Data Acquisition
+
+The BLS dataset was obtained during the earlier project milestones and cleaned for use in P3.
+
+The CPI dataset was acquired from FRED using its CSV. The notebook checks for a cached file before downloading, uses a request timeout, and validates the dataset.
+
+Raw files are stored in `data/raw/`, and processed datasets are stored in `data/processed/`.
+
+### Data Integration
+
+The datasets are joined using the monthly `date` column.
+
+- Join type: Left join
+- Relationship: Many-to-one
+- BLS observations: 1,056
+- CPI observations: 132
+- Final merged observations: 1,056
+- Unmatched dates: 0
+
+The merge uses `validate="many_to_one"` to protect against duplicate CPI matches.
+
+### Data Verification
+
+The notebook has seven assertions to verify row preservation, unique dates, matched observations, and CPI data quality.
+
+One CPI value is missing for October 2025. Because the BLS dataset contains eight industries per month, this produces eight missing CPI values in the merged dataset.
+
+The missing values were documented, not automatically filled.
+
+### Reproducing the Project
+
+1. Open `DSA405_002_FA26_P3_laramse3.ipynb` in Google Colab.
+2. Make sure the BLS file is available at the path expected by the notebook.
+3. Run the cells in order.
+4. The CPI acquisition code will use the cached CSV if it exists or attempt to download it from FRED.
+5. Run the merge and verification cells.
+6. Confirm the seven assertions pass.
+
+The final output is saved as:
+
+`data/processed/bls_cpi_merged_verified.csv`
+
