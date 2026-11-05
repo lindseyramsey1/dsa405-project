@@ -83,4 +83,7 @@ The missing values were documented, not automatically filled.
 The final output is saved as:
 
 `data/processed/bls_cpi_merged_verified.csv`
+Output Files
+data/processed/bls_hourly_earnings_cleaned.csv
+data/processed/bls_cpi_merged_verified.csv
 
