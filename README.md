@@ -1,89 +1,169 @@
-# DSA 405-project
-# Industry Wage Growth and Inflation
+# Inflation-Adjusted Hourly Wage Growth Across U.S. Industries (2015–2025)
 
-This project examines how average hourly earnings have changed across eight U.S. industries from 2015 through 2025. The goal of the project is to compare wage growth across industries and eventually determine how those changes compare after accounting for inflation.
+**Lindsey Ramsey**  
+NC State University | DSA 405 | Fall 2026
 
-## Data Source
+## Project Overview
 
-The wage data come from the U.S. Bureau of Labor Statistics (BLS) Current Employment Statistics (CES) program. The dataset contains monthly average hourly earnings from January 2015 through December 2025 for eight industries:
+This project examines how average hourly wages changed across eight major U.S. private-sector industries between 2015 and 2025 after accounting for inflation.
 
-- Construction
-- Manufacturing
-- Trade, Transportation, and Utilities
-- Information
-- Financial Activities
-- Professional and Business Services
-- Private Education and Health Services
-- Leisure and Hospitality
+My research question is:
 
-The original BLS data used for the project are preserved in data/raw/bls_hourly_earnings_raw.csv. Additional source information and the retrieval date are documented in data/raw/SOURCES.md.
-## Running It
-To run it, open the notebook in Google Colab and run the cells from top to bottom. 
+**Which major U.S. private-sector industries experienced the greatest and smallest inflation-adjusted hourly wage growth from 2015 through 2025?**
 
-## Part 2: Data Audit and Cleaning
+I chose this topic because wage increases do not always mean workers have more purchasing power. This is a highly spoken about topic today, hence the idea to do a deeper dive. By adjusting hourly earnings for inflation, I wanted to better understand which industries experienced the most and least real wage growth.
 
-Part 2 audits and cleans the BLS wage dataset. The notebook examines data types, missing values, distinct values, numeric ranges, categorical levels, duplicates, monthly coverage, sentinel values, identifiers, and other potential data-quality issues.
+## Data Sources
 
-The cleaned data retain all 1,056 original observations. The cleaning process converts `year` and `hourly_earnings` to appropriate data types and creates `month` and `date` variables for chronological analysis.
+I used two publicly available datasets listed below and provided in the repository.
 
-## Repository Structure
+### 1. Bureau of Labor Statistics (BLS)
 
-- `data/raw/` — preserved raw BLS data and source documentation
-- `data/raw/SOURCES.md` — data source and retrieval information
-- `README.md` — project description and instructions
-- Project notebook — data audit, cleaning, documentation, and analysis
+- **Data:** Average hourly earnings for eight major private-sector industries
+- **Time period:** January 2015–December 2025
+- **Frequency:** Monthly
+- **Observations:** 1,056
+- **Access method:** BLS Public Data API
 
-## P3: Acquisition & Integration
+Source: https://www.bls.gov/
 
-### Data Sources
+API documentation: https://www.bls.gov/developers/
 
-- **Bureau of Labor Statistics (BLS):** Monthly average hourly earnings across eight U.S. industries.
-- **Federal Reserve Economic Data (FRED):** Consumer Price Index for All Urban Consumers (`CPIAUCSL`).
+API terms: https://www.bls.gov/developers/termsOfService.htm
 
-Both datasets cover January 2015 through December 2025.
+### 2. Federal Reserve Economic Data (FRED)
 
-### Data Acquisition
+- **Data:** Consumer Price Index for All Urban Consumers (CPIAUCSL)
+- **Frequency:** Monthly
+- **Purpose:** Adjust hourly earnings for inflation
+- **Access method:** CSV download
 
-The BLS dataset was obtained during the earlier project milestones and cleaned for use in P3.
+Source: https://fred.stlouisfed.org/series/CPIAUCSL
 
-The CPI dataset was acquired from FRED using its CSV. The notebook checks for a cached file before downloading, uses a request timeout, and validates the dataset.
+API documentation: https://fred.stlouisfed.org/docs/api/fred/
 
-Raw files are stored in `data/raw/`, and processed datasets are stored in `data/processed/`.
+Terms of use: https://fred.stlouisfed.org/docs/api/terms_of_use.html
 
-### Data Integration
+The CPI data is originally produced by BLS and made available through FRED.
 
-The datasets are joined using the monthly `date` column.
+## Project Files
 
-- Join type: Left join
-- Relationship: Many-to-one
-- BLS observations: 1,056
-- CPI observations: 132
-- Final merged observations: 1,056
-- Unmatched dates: 0
+The repository includes:
 
-The merge uses `validate="many_to_one"` to protect against duplicate CPI matches.
+- **P2 notebook:** Audits and cleans the BLS hourly earnings data.
+- **P3/P4 notebook:** Combines the BLS and CPI datasets, verifies the merge, calculates inflation-adjusted wages, and produces the final analysis and visualizations. 
+- **Datasets:** The CSV files provided in the repository.
+- **requirements.txt:** Lists the Python packages needed to run the notebooks, also listed in the notebooks themselves.
 
-### Data Verification
+The P4 analysis was added to the P3 notebook because it builds directly on the data integration completed during that milestone.
 
-The notebook has seven assertions to verify row preservation, unique dates, matched observations, and CPI data quality.
+## Data Cleaning and Integration
 
-One CPI value is missing for October 2025. Because the BLS dataset contains eight industries per month, this produces eight missing CPI values in the merged dataset.
+I started by checking the BLS dataset for missing values, duplicate records, incorrect data types, and unusual values.
 
-The missing values were documented, not automatically filled.
+Then, I converted the year and hourly earnings variables into numeric types and created month and date columns to make the data easier to analyze. It also allowed me to integrate the datasets with the shared key.
 
-### Reproducing the Project
+I then combined the BLS wage data with the FRED CPI data using a left join on the monthly date.
 
-1. Open `DSA405_002_FA26_P3_laramse3.ipynb` in Google Colab.
-2. Make sure the BLS file is available at the path expected by the notebook.
-3. Run the cells in order.
-4. The CPI acquisition code will use the cached CSV if it exists or attempt to download it from FRED.
-5. Run the merge and verification cells.
-6. Confirm the seven assertions pass.
+The merged dataset contained 1,056 observations. All BLS dates matched CPI dates, but eight observations from October 2025 had missing CPI values.
 
-The final output is saved as:
+Rather than estimate the missing CPI values, I excluded these eight observations from the final analysis to avoid incorrect information and analysis. This left 1,048 observations.
 
-`data/processed/bls_cpi_merged_verified.csv`
-Output Files
-data/processed/bls_hourly_earnings_cleaned.csv
-data/processed/bls_cpi_merged_verified.csv
+For the 2015-to-2025 comparison, I also excluded October 2015 so both years used the same 11 months.
 
+## Analysis Methods
+
+I calculated inflation-adjusted hourly wages using:
+
+**Real Hourly Wage = (Nominal Hourly Earnings / CPI) × 100**
+
+The resulting values are expressed in 1982–1984 dollars per hour.
+
+I then calculated the average real hourly wage for each industry in 2015 and 2025, using the same months in both years.
+
+Finally, I calculated percentage growth for each industry:
+
+**Real Wage Growth (%) = ((2025 Real Wage − 2015 Real Wage) / 2015 Real Wage) × 100**
+
+I used Python and Matplotlib to visualize the results.
+
+## Key Findings
+
+All eight industries experienced positive inflation-adjusted hourly wage growth from 2015 to 2025.
+
+| Industry | Real Wage Growth |
+|---|---:|
+| Leisure and Hospitality | 17.38% |
+| Financial Activities | 11.03% |
+| Information | 10.23% |
+| Professional and Business Services | 8.13% |
+| Construction | 6.74% |
+| Trade, Transportation, and Utilities | 4.76% |
+| Private Education and Health Services | 3.74% |
+| Manufacturing | 3.35% |
+
+**Leisure and Hospitality experienced the greatest growth at 17.38%, while Manufacturing experienced the smallest growth at 3.35%.**
+
+Although Leisure and Hospitality had the highest percentage growth, it still had the lowest average real hourly wage among the industries studied.
+
+## Limitations
+
+This analysis has several limitations.
+
+First, it focuses on eight major private-sector industries rather than every industry in the United States.
+
+Second, the data represents industry averages rather than individual workers' wages. Therefore, the results do not show whether all workers within an industry experienced similar wage growth.
+
+Third, I used national CPI data, which does not account for differences in living costs between regions.
+
+Finally, the October 2025 CPI value was missing from my dataset, so I used 11 matching months for the endpoint comparison.
+
+These findings describe differences in average real wage growth, but they do not establish what caused those differences.
+
+## Software and Packages
+
+The project uses Python and Jupyter notebooks.
+
+Required packages:
+
+- pandas
+- numpy
+- requests
+- matplotlib
+
+These packages are listed in `requirements.txt`.
+
+## How to Run the Project
+
+1. Download or clone this GitHub repository.
+2. Open the project in Jupyter Notebook or Google Colab.
+3. Install the required packages using:
+
+   `pip install -r requirements.txt`
+
+4. Make sure the BLS and FRED CSV files are available in the file locations expected by the notebooks.
+5. Open the P2 notebook and run all cells to reproduce the data audit and cleaning.
+6. Open the combined P3/P4 notebook and run all cells to reproduce the data integration, verification, calculations, and visualizations.
+
+The final analysis produces a table of real wage growth by industry and two visualizations:
+
+- A horizontal bar chart comparing inflation-adjusted wage growth across industries.
+- A line graph showing inflation-adjusted hourly wages over time.
+
+## AI Use
+
+I used ChatGPT to help troubleshoot Python errors, as well as understand data-cleaning and merging decisions.
+
+I reviewed the code and checked the outputs rather than relying on AI-generated suggestions without verification.
+
+One important correction involved making sure the 2015 and 2025 comparisons used the same months after identifying the missing October 2025 CPI value.
+
+A huge resource that was not AI, but assisted me in learning better code for my project is the matplotlib.org lessons, as well as w3schools.com and docs.python.org.
+
+## Conclusion
+
+This project showed that all eight industries experienced positive average hourly wage growth after adjusting for inflation, but the size of the increases varied considerably 
+
+Leisure and Hospitality experienced the greatest real wage growth, while Manufacturing experienced the smallest.
+
+The project also helped me improve my skills in data cleaning, integrating multiple sources, verifying results, and communicating findings clearly.
